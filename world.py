@@ -146,15 +146,15 @@ class World:
                     glVertex3f(x, y + (self.size[1] if y == 0 else -self.size[1]), z)
         glEnd()
 
-    def render_face_highlight(self, position, normal):
+    def render_face_highlight(self, position, normal, color=(1.0, 1.0, 0.0)):
         """Highlight the face of a block with a wireframe."""
         if position:
             glPushMatrix()
             glTranslatef(position[0] + 0.5, position[1] + 0.5, position[2] + 0.5)
-            glColor3f(1.0, 1.0, 0.0)  # Yellow for face highlight
-            glLineWidth(2.0)
+            glColor3f(*color)  # Face highlight color
+            glBegin(GL_LINES)
 
-            # Determine the face to highlight based on the normal
+            # Define face vertices based on the normal
             if normal == (0, 1, 0):  # Top face
                 corners = [(-0.5, 0.5, -0.5), (0.5, 0.5, -0.5), (0.5, 0.5, 0.5), (-0.5, 0.5, 0.5)]
             elif normal == (0, -1, 0):  # Bottom face
@@ -169,9 +169,9 @@ class World:
                 corners = [(-0.5, -0.5, -0.5), (0.5, -0.5, -0.5), (0.5, 0.5, -0.5), (-0.5, 0.5, -0.5)]
 
             # Render the wireframe for the face
-            glBegin(GL_LINE_LOOP)
-            for corner in corners:
-                glVertex3f(*corner)
+            for i in range(len(corners)):
+                glVertex3f(*corners[i])
+                glVertex3f(*corners[(i + 1) % len(corners)])
             glEnd()
             glPopMatrix()
 

@@ -43,6 +43,8 @@ def update(delta_time):
 
 
 def render():
+    glLineWidth(2.0)  # Set uniform line thickness
+
     """Render game world."""
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -129,8 +131,9 @@ def highlight_block():
 
     for grid_pos in raycast_to_grid(position, direction, max_distance=10.0, grid_size=GRID_SIZE):
         if grid_pos in world.blocks:
-            # Highlight the entire block wireframe
-            world.render_full_wireframe(grid_pos, color=(1.0, 1.0, 0.0))  # Yellow for highlight
+            # Highlight the face
+            face_normal = get_face_normal(position, direction, grid_pos)
+            world.render_face_highlight(grid_pos, face_normal)
             break
         elif grid_pos[1] == 0:
             # Highlight the floor cell
@@ -150,7 +153,7 @@ def get_face_normal(player_position, direction, block_position):
     ]
     axis = max(range(3), key=lambda i: abs(offset[i]))  # Find the dominant axis
     face_normal = [0, 0, 0]
-    face_normal[axis] = 1 if offset[axis] > 0 else -1
+    face_normal[axis] = 1 if direction[axis] > 0 else -1
     return tuple(face_normal)
 
 
